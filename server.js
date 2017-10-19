@@ -1,112 +1,147 @@
-// Le package `dotenv` permet de pouvoir definir des variables d'environnement dans le fichier `.env`
-// Nous utilisons le fichier `.slugignore` afin d'ignorer le fichier `.env` dans l'environnement Heroku
-require("dotenv").config();
+/////////////////////////////////////////////////////////////////////////////////////
+// MODULES //////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+const express = require('express');
+const cors = require('cors');
+const crypto = require('crypto');
+const compression = require('compression');
+const session = require('express-session');
+const bodyParser = require('body-parser');
+const logger = require('morgan');
+const chalk = require('chalk');
+const helmet = require('helmet');
+const errorHandler = require('errorhandler');
+const dotenv = require('dotenv');
+const flash = require('express-flash');
+const MongoStore = require('connect-mongo')(session);
+const path = require('path');
+const mime = require('mime');
+const mongoose = require('mongoose');
+const passport = require('passport');
+const expressValidator = require('express-validator');
+const swaggerJSDoc = require('swagger-jsdoc');
+const chokidar = require('chokidar');
+const config = require('./config/config');
+require('dotenv').config();
+const app = (module.exports = express());
 
-// Le package `mongoose` est un ODM (Object-Document Mapping) permettant de manipuler les documents de la base de données comme si c'étaient des objets
-var mongoose = require("mongoose");
-mongoose.Promise = global.Promise;
-mongoose.connect(process.env.MONGODB_URI, function (err) {
-  // paramètre qui vient de dotenv
-  if (err) console.error("Could not connect to mongodb.");
+/////////////////////////////////////////////////////////////////////////////////////
+// SWAGGER //////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+const hostVar = process.env.NODE_ENV === 'production' ? 'moveet-api.herokuapp.com' : 'localhost:3001';
+let swaggerDefinition = {
+	info: {
+		title: 'Moveet API',
+		version: '1.0.0',
+		description: 'Moveet API documentation'
+	},
+	host: hostVar,
+	basePath: '/'
+};
+
+let options = {
+	swaggerDefinition: swaggerDefinition,
+	apis: ['./api/modules/*/*Routes.js']
+};
+let swaggerSpec = swaggerJSDoc(options);
+
+/////////////////////////////////////////////////////////////////////////////////////
+// MONGOOSE /////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+mongoose.connect(process.env.MONGODB_URI);
+mongoose.connection.on('error', () => {
+	console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
+	process.exit(1);
 });
 
-var express = require("express");
-var app = express();
-app.use(express.static("public"));
-
-// Le package `helmet` est une collection de protections contre certaines vulnérabilités HTTP
-var helmet = require("helmet");
+/////////////////////////////////////////////////////////////////////////////////////
+// EXPRESS //////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+app.set('port', process.env.PORT || 3000);
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
+app.set('superSecret', config.secret);
+app.use(express.static('public'));
+app.use(logger('dev'));
 app.use(helmet());
-
-// Les réponses (> 1024 bytes) du serveur seront compressées au format GZIP pour diminuer la quantité d'informations transmise
-var compression = require("compression");
 app.use(compression());
-
-// Parse le `body` des requêtes HTTP reçues
-var bodyParser = require("body-parser");
-//app.use(bodyParser.json());
 app.use(bodyParser.json({ limit: '15mb' }));
 app.use(bodyParser.urlencoded({ limit: '15mb', extended: true }));
-
-
-// Initialisation des models
-//var Movies = require("./models/_Movie");
-var AllocineMovies = require("./models/AllocineMovie");
-var User = require("./models/User");
-
-// Le package `passport`
-var passport = require("passport");
-app.use(passport.initialize()); // TODO test
-
-// Nous aurons besoin de 2 strategies :
-// - `local` permettra de gérer le login nécessitant un mot de passe
-var LocalStrategy = require("passport-local").Strategy;
-passport.use(
-  new LocalStrategy(
-    {
-      usernameField: "email",
-      passReqToCallback: true,
-      session: false
-    },
-    User.authenticateLocal()
-  )
+app.use(expressValidator());
+app.use(
+	session({
+		resave: true,
+		saveUninitialized: true,
+		secret: process.env.SESSION_SECRET,
+		store: new MongoStore({
+			url: process.env.MONGODB_URI,
+			autoReconnect: true,
+			clear_interval: 3600
+		})
+	})
 );
+app.use(errorHandler());
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
+app.use((req, res, next) => {
+	res.locals.user = req.user;
+	next();
+});
+app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
+app.use('/api', cors());
 
-app.get("/", function (req, res) {
-  res.render(index);
+app.get('/', (req, res) => {
+	res.send('API ready');
 });
 
-// `Cross-Origin Resource Sharing` est un mechanisme permettant d'autoriser les requêtes provenant d'un nom de domaine different
-// Ici, nous autorisons l'API à repondre aux requêtes AJAX venant d'autres serveurs
-var cors = require("cors");
-app.use("/api", cors());
-
-// Les routes sont séparées dans plusieurs fichiers
-var moviesRoutes = require("./routes/movies.js");
-var usersRoutes = require("./routes/users.js");
-var movieRoutes = require("./routes/movie.js");
-var userRoutes = require("./routes/user.js");
-var theatersRoutes = require("./routes/theaters.js");
-// Les routes relatives aux utilisateurs auront pour prefix d'URL `/user`
-app.use("/api/movies", moviesRoutes);
-app.use("/api/movie", movieRoutes);
-app.use("/api/users", usersRoutes);
-app.use("/api/user", userRoutes);
-app.use("/api/theaters", theatersRoutes);
-
-// Les routes sont séparées dans plusieurs fichiers
-// Les routes relatives aux utilisateurs auront pour prefix d'URL `/user`
-
-// Toutes les méthodes HTTP (GET, POST, etc.) des pages non trouvées afficheront une erreur 404
-app.all("*", function (req, res) {
-  res.status(404).json({
-    error: "Not Found"
-  });
+app.get('/swagger.json', (req, res) => {
+	res.setHeader('Content-Type', 'application/json');
+	res.send(swaggerSpec);
 });
 
-// Le dernier middleware de la chaîne gérera les d'erreurs
-// Ce `error handler` doit définir obligatoirement 4 paramètres
-// Définition d'un middleware : https://expressjs.com/en/guide/writing-middleware.html
-app.use(function (err, req, res, next) {
-  if (res.statusCode === 200) res.status(400);
-  console.error(err);
+/////////////////////////////////////////////////////////////////////////////////////
+// ROUTES ///////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+// require('./api/modules/auth/authRoutes')(app);
+// require('./api/modules/users/userRoutes')(app);
+require('./api/modules/movies/movieRoutes')(app);
 
-  if (process.env.NODE_ENV === "production") err = "An error occurred";
-  res.json({
-    error: err
-  });
-});
-
-app.listen(process.env.PORT, function () {
-  console.log(`Moveet API running on port ${process.env.PORT}`);
-  //console.log("Moveet API process.env", process.env);
-});
-
-// for local dev only
-// app.listen(3000, function() {
-//   console.log(`Moveet API running on port 3000`);
-//   //console.log("Moveet API process.env", process.env);
+/////////////////////////////////////////////////////////////////////////////////////
+// CHOKIDAR /////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+// const incomingData = require('./incomingData.js');
+// const watcher = chokidar.watch('./incoming', {
+// 	ignored: /(^|[\/\\])\../,
+// 	persistent: true,
+// 	ignoreInitial: true
 // });
 
-// TODO test
-// console.log(`process.env.NODE_ENV = ${process.env.NODE_ENV}`);
+// const log = console.log.bind(console);
+// // Add event listeners.
+// watcher.on('add', path => {
+// 	log(`File ${path} has been added`);
+// 	incomingData.importData(path);
+// });
+
+/////////////////////////////////////////////////////////////////////////////////////
+// EXPRESS ERROR HANDLING ///////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+app.all('*', (req, res) => {
+	res.status(404).json({
+		error: 'Not Found'
+	});
+});
+
+/////////////////////////////////////////////////////////////////////////////////////
+// EXPRESS START UP /////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+app.listen(app.get('port'), () => {
+	console.log(
+		'%s App is running at http://localhost:%d in %s mode',
+		chalk.green('✓'),
+		app.get('port'),
+		app.get('env')
+	);
+	console.log('  Press CTRL-C to stop\n');
+});
