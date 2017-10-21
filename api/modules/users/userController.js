@@ -150,32 +150,37 @@
 								},
 								{
 									$project: {
-										_id: {
-											_id: '$_id',
-											email: '$email',
-											favorites: '$account.favorites'
-										},
-										favorites: 1
-									}
-								},
-								{
-									$group: {
-										_id: '$_id',
-										movies: {
-											$push: '$_id.favorites'
-										}
+										account: 1,
+										favorites: '$account.favorites'
 									}
 								},
 								{
 									$project: {
+										account: 1,
 										matchesCount: {
 											$size: {
-												$setIntersection: [query, '$_id.favorites']
+												$setIntersection: [query, '$favorites']
 											}
 										},
-										matches: {
-											$setIntersection: [query, '$_id.favorites']
+										matchesIds: {
+											$setIntersection: [query, '$favorites']
 										}
+									}
+								},
+								{
+									$lookup: {
+										from: 'movies',
+										localField: 'matchesIds',
+										foreignField: '_id',
+										as: 'matchingMovies'
+									}
+								},
+								{
+									$project: {
+										account: 1,
+										matchesCount: 1,
+										matchesIds: 1,
+										matchingMovies: 1
 									}
 								}
 							],
@@ -205,15 +210,30 @@
 						},
 						{
 							$project: {
-								account: '$account'
+								account: 1,
+								threeFav: { $slice: ['$account.favorites', 3] }
 							}
 						},
 						{
-							$unwind: '$account.favorites'
+							$lookup: {
+								from: 'movies',
+								localField: 'threeFav',
+								foreignField: '_id',
+								as: 'threeFavorites'
+							}
+						},
+						{
+							$project: {
+								'account.subscription': 1,
+								'account.age': 1,
+								'account.genre': 1,
+								'account.description': 1,
+								'account.picture': 1,
+								'account.location': 1,
+								'account.username': 1,
+								threeFavorites: 1
+							}
 						}
-						// {
-						// 	$lookup: {}
-						// }
 					],
 					(err, buddies) => {
 						if (err) {
