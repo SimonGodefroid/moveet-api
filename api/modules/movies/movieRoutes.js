@@ -2,8 +2,8 @@ module.exports = app => {
 	const Ctrl = require('./movieController')();
 	// const passportConfig = require('../../../config/passport');
 	// app.use(passportConfig.tokenAuthApi);
-	app.route('/api/movies').get(Ctrl.list);
-	app.route('/api/movie/:id([a-fA-F\\d]{24})').get(Ctrl.read);
+	app.route('/api/v1/movies').get(Ctrl.list);
+	app.route('/api/v1/movies/:id([a-fA-F\\d]{24})').get(Ctrl.read);
 };
 
 // app.get('/', function(req, res, next) {

@@ -90,6 +90,7 @@
 						result = user[0];
 					}
 					if (err) {
+						console.log('err', err);
 						return res.status(500).json({ success: false, message: err });
 					} else {
 						return res.json({ success: true, message: result });
@@ -97,23 +98,30 @@
 				});
 			},
 			favoritesToggle: (req, res) => {
-				User.findById(req.params.id, (err, user) => {
-					if (err) {
+				Movie.findById(req.params.movieid, (err, movie) => {
+					if (err || movie === null) {
 						console.log(err);
-						return res.status(500).json({ success: false, message: err });
+						return res.status(500).json({ success: false, message: err || 'movie not found' });
 					} else {
-						Movie.findById(req.params.movieId, (err, movie) => {
-							if (err || movie === null) {
+						User.findById(req.params.id, (err, user) => {
+							if (err) {
 								console.log(err);
 								return res.status(500).json({ success: false, message: err });
 							} else {
-								if (user.account.favorites.indexOf(movie._id) === -1) {
-									user.account.favorites.push(movie._id);
+								let queryObj = { _id: mongoose.Types.ObjectId(req.params.id) };
+								let updateOperator = {};
+								let queryOperator = '$push';
+								let favorite = { 'account.favorites': req.params.movieid };
+								let options = { new: true };
+								if (user.account.favorites.indexOf(req.params.movieid) !== -1) {
+									queryOperator = '$pull';
+									updateOperator[queryOperator] = favorite;
 								} else {
-									user.account.favorites.splice(user.account.favorites.indexOf(movie._id), 1);
+									updateOperator[queryOperator] = favorite;
 								}
-								user.save((err, user) => {
+								User.findOneAndUpdate(queryObj, updateOperator, options, (err, user) => {
 									if (err) {
+										console.log('err', err);
 										return res.status(500).json({ success: false, message: err });
 									}
 									return res.status(200).json({ success: true, message: user });
@@ -173,6 +181,7 @@
 							],
 							(err, matches) => {
 								if (err) {
+									console.log('err', err);
 									return res.status(500).json({ success: false, message: err });
 								} else {
 									return res.status(200).json({ success: true, message: matches });
@@ -181,6 +190,40 @@
 						);
 					}
 				});
+			},
+			buddyFinder: (req, res) => {
+				let query = [mongoose.Types.ObjectId(req.params.movieid)];
+				User.aggregate(
+					[
+						{
+							$match: {
+								_id: { $ne: mongoose.Types.ObjectId(req.params.id) },
+								'account.favorites': {
+									$in: query
+								}
+							}
+						},
+						{
+							$project: {
+								account: '$account'
+							}
+						},
+						{
+							$unwind: '$account.favorites'
+						}
+						// {
+						// 	$lookup: {}
+						// }
+					],
+					(err, buddies) => {
+						if (err) {
+							console.log('err', err);
+							return res.status(500).json({ success: false, message: err });
+						} else {
+							return res.status(200).json({ success: true, count: buddies.length, message: buddies });
+						}
+					}
+				);
 			}
 		};
 	};

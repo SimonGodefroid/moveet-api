@@ -1,7 +1,7 @@
 module.exports = app => {
 	const Ctrl = require('./userController')();
-	const User = require('./userModel.js');
-	const Movie = require('../movies/movieModel.js');
+	const User = require('./userModel');
+	const Movie = require('../movies/movieModel');
 	const _ = require('lodash');
 	require('dotenv').config();
 	const cloudinary = require('cloudinary');
@@ -16,7 +16,8 @@ module.exports = app => {
 	// returns the users for which favorites matches the user's favorites
 	app.route('/api/v1/users/:id([a-fA-F\\d]{24})/matches').get(Ctrl.matchesList);
 	// returns a list of buddies that want to see the same movie as the given user
-	// app.route('api/v1/users/:id([a-fA-F\\d]{24})/buddyFinder/:movieId([a-fA-F\\d]{24})').get(Ctrl.buddyFinder);
+	app.route('/api/v1/users/:id([a-fA-F\\d]{24})/findbuddy/:movieid([a-fA-F\\d]{24})').get(Ctrl.buddyFinder);
+	app.route('/api/v1/users/:id([a-fA-F\\d]{24})/favorites/:movieid([a-fA-F\\d]{24})').post(Ctrl.favoritesToggle);
 };
 
 // router.get('/buddyFinder/:movieId/for/:userId', (req, res) => {

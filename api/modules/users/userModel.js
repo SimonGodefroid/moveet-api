@@ -2,19 +2,16 @@ const mongoose = require('mongoose');
 const passportLocalMongoose = require('passport-local-mongoose');
 
 const UserSchema = new mongoose.Schema({
-	shortId: Number, // un shortId nous est utile au moment de l'importation du jeu de données `npm run data` car les relations y sont identifiées à l'aide d'identifiants courts
+	shortId: Number,
 	email: String,
 	password: String,
-	token: String, // Le token permettra d'authentifier l'utilisateur à l'aide du package `passport-http-bearer`
-
-	// Nous choisisons de créer un objet `account` dans lequel nous stockerons les informations non sensibles
+	token: String,
 	account: {
 		username: {
 			type: String,
 			unique: true,
 			required: true
 		},
-
 		favorites: [
 			{
 				type: mongoose.Schema.Types.ObjectId,
@@ -31,67 +28,22 @@ const UserSchema = new mongoose.Schema({
 			longitude: Number,
 			timestamp: Number
 		},
-
 		buddies: [
 			{
 				_id: {
 					type: mongoose.Schema.Types.ObjectId,
 					ref: 'User'
-				},
-				isBuddy: Boolean,
-				requestAcceptedBy: {
-					type: mongoose.Schema.Types.ObjectId,
-					ref: 'User'
-				},
-				requestSentBy: {
-					type: mongoose.Schema.Types.ObjectId,
-					ref: 'User'
-				},
-				status: String
-			}
-		],
-		buddiesRequestsSent: [
-			{
-				buddyId: {
-					type: mongoose.Schema.Types.ObjectId,
-					ref: 'User'
-				},
-				isBuddy: Boolean,
-				created: {
-					type: Date,
-					default: Date.now
-				},
-				status: String,
-				requestedBy: {
-					type: mongoose.Schema.Types.ObjectId,
-					ref: 'User'
 				}
 			}
-		],
-		buddiesRequestsReceived: [
-			{
-				buddyId: {
-					type: mongoose.Schema.Types.ObjectId,
-					ref: 'User'
-				},
-				isBuddy: Boolean,
-				created: {
-					type: Date,
-					default: Date.now
-				},
-				status: String,
-				addedBy: {
-					type: mongoose.Schema.Types.ObjectId,
-					ref: 'User'
-				}
-			}
-		],
-		messages: [
-			{
-				id_speaker: mongoose.Schema.Types.ObjectId,
-				id_message: mongoose.Schema.Types.ObjectId
-			}
-		],
+		]
+	},
+	messages: [
+		{
+			id_speaker: mongoose.Schema.Types.ObjectId,
+			id_message: mongoose.Schema.Types.ObjectId
+		}
+	],
+	swiper: {
 		moviesSwiperLiked: [
 			{
 				type: mongoose.Schema.Types.ObjectId,
@@ -103,8 +55,7 @@ const UserSchema = new mongoose.Schema({
 				type: mongoose.Schema.Types.ObjectId,
 				ref: 'Movie'
 			}
-		],
-		moviesSwiperDeck: Array
+		]
 	},
 	cId: String
 });
