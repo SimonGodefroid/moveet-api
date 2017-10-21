@@ -14,14 +14,14 @@
 				!req.query.limit || isNaN(req.query.limit)
 					? (query.limit = 100)
 					: (query.limit = parseInt(req.query.limit));
-				if (!req.query.sort || req.query.sort === '') {
-					query.sort = {};
-				} else {
-					query.sort = {};
-					query['sort'][Object.keys(req['query']['sort'])[0]] = parseInt(
-						req['query']['sort'][Object.keys(req.query.sort)[0]]
-					);
-				}
+				// if (!req.query.sort || req.query.sort === '') {
+				// 	query.sort = {};
+				// } else {
+				// 	query.sort = {};
+				// 	query['sort'][Object.keys(req['query']['sort'])[0]] = parseInt(
+				// 		req['query']['sort'][Object.keys(req.query.sort)[0]]
+				// 	);
+				// }
 				console.log('req.params', query.sort);
 				// const keys = Object.keys(Interim.schema.paths);
 				// const q = Global.queryBuilder(keys, req);
@@ -35,10 +35,10 @@
 						},
 						{
 							$limit: query.limit
-						},
-						{
-							$sort: query.sort
 						}
+						// {
+						// 	$sort: query.sort
+						// }
 					],
 					(err, movies) => {
 						if (err) {

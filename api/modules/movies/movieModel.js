@@ -1,6 +1,6 @@
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
-var AllocineMovieSchema = new mongoose.Schema({
+const MovieSchema = new mongoose.Schema({
 	code: Number,
 	movieType: {
 		code: Number,
@@ -52,4 +52,4 @@ var AllocineMovieSchema = new mongoose.Schema({
 	statistics: Object
 });
 
-module.exports = mongoose.model('AllocineMovie', AllocineMovieSchema, 'allocinemovies');
+module.exports = mongoose.model('Movie', MovieSchema, 'movies');
