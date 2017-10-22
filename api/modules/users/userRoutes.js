@@ -18,66 +18,22 @@ module.exports = app => {
 	// returns a list of buddies that want to see the same movie as the given user
 	app.route('/api/v1/users/:id([a-fA-F\\d]{24})/findbuddy/:movieid([a-fA-F\\d]{24})').get(Ctrl.buddyFinder);
 	app.route('/api/v1/users/:id([a-fA-F\\d]{24})/favorites/:movieid([a-fA-F\\d]{24})').post(Ctrl.favoritesToggle);
+	app.route('/api/v1/users/:id([a-fA-F\\d]{24})/swipelike/:movieid([a-fA-F\\d]{24})').post(Ctrl.swipeLike);
+	app.route('/api/v1/users/:id([a-fA-F\\d]{24})/swipepass/:movieid([a-fA-F\\d]{24})').post(Ctrl.swipePass);
 };
 
-// router.get('/buddyFinder/:movieId/for/:userId', (req, res) => {
-// 	console.log('finding buddy for movieid', req.params.movieId, 'for user', req.params.userId);
-// 	// on cherche l'utilisateur connecté
-// 	let query = [req.params.movieId];
-// 	User.find({})
-// 		.where('account.favorites')
-// 		.populate('account.favorites', 'originalTitle')
-// 		.select('-token -email -__v')
-// 		.in(query)
-// 		.exec((err, matches) => {
-// 			if (err) {
-// 				console.log('An error occurred' + err);
-// 			} else {
-// 				console.log(matches.length);
-// 				// matches un tableau d'utilisateurs dont les favorites contiennent au moins un film en commun avec ceux du current user. Ce tableau contient aussi le current user, ainsi pour le sortir des résultats on fait un tableau temporaire qui s'appelle elementPos qui contient l'id de chaque user contenu dans matches. On fait donc un indexOf de l'id du current user pour trouver sa position dans le tableau matches...
-// 				let elementPos = matches
-// 					.map(x => {
-// 						return x._id.toString();
-// 					})
-// 					.indexOf(req.params.userId);
-// 				// ...puis on le sort du tableau en utilisant splice.
-// 				if (elementPos !== -1) {
-// 					matches.splice(elementPos, 1);
-// 				}
-// 				// on créé un tableau vide dans lequel on pousse chaque user qui a matché avec le current user
-// 				let buddiesFound = [];
-// 				for (let i = 0; i < matches.length; i++) {
-// 					let matchUser = {};
-// 					matchUser._id = matches[i]['_id'];
-// 					matchUser.account = matches[i]['account'];
-// 					buddiesFound.push(matchUser);
-// 				}
-// 				return res.status(200).json({
-// 					success: true,
-// 					message: buddiesFound
-// 				});
-// 			}
-// 		});
-// });
-
 // router.post('/:userId/saveUserImage/', function(req, res, next) {
-// 	console.log('coucou saveuserimage');
-// 	console.log('req.body.imagePath', req.body.imagePath);
-
 // 	cloudinary.uploader.upload(req.body.imagePath, function(result) {
-// 		console.log('result cloudinary', result);
 // 		User.findOne(
 // 			{
 // 				_id: req.params.userId
 // 			},
-// 			function(err, user) {
+// 			(err, user) =>{
 // 				if (err) {
 // 					console.log(err);
 // 				} else {
-// 					(user.account.picture = result.secure_url),
-// 						user.save(function(err, obj) {
-// 							console.log('user.account.picture', user.account.picture);
-// 							console.log("on a sauvé l'image pour cet user");
+// 					user.account.picture = result.secure_url;
+// 						user.save((err, obj)=> {
 // 							res.send('Image updated for user');
 // 						});
 // 				}
@@ -91,19 +47,19 @@ module.exports = app => {
 // 	cloudinary.uploader.upload(
 // 		req.body.imageBase64.data,
 // 		// "data:image/gif;base64," + req.body.data,
-// 		function(result) {
+// 		(result) =>{
 // 			console.log(Object.keys(result));
 // 			User.findOne(
 // 				{
 // 					_id: req.params.userId
 // 				},
-// 				function(err, user) {
+// 				(err, user) =>{
 // 					if (err) {
 // 						console.log(err);
 // 					} else {
 // 						user.account.picture = result.secure_url;
 // 						user.account.cId = result.public_id;
-// 						user.save(function(err, obj) {
+// 						user.save((err, obj) =>{
 // 							res.send('Image updated for user');
 // 						});
 // 					}
@@ -111,65 +67,6 @@ module.exports = app => {
 // 			);
 // 		}
 // 	);
-// });
-
-// router.post('/:userId/moviesSwiperLike/:movieId', (req, res, next) => {
-// 	User.findById(req.params.userId, (err, user) => {
-// 		if (e) {
-// 			console.log(e);
-// 			return res.status(500).json({ success: false, message: e });
-// 		} else {
-// 			console.log(user);
-// 			Movie.findById(req.params.movieId, (err, movie) => {
-// 				if (e) {
-// 					console.log(e);
-// 					return res.status(500).json({ success: false, message: e });
-// 				} else {
-// 					if (user.account.moviesSwiperLiked.indexOf(movie._id) === -1) {
-// 						user.account.moviesSwiperLiked.push(movie._id);
-// 					} else {
-// 						console.log('le film existe déjà dans les Liked');
-// 					}
-// 					user.save((err, obj) => {
-// 						if (e) {
-// 							return res.status(500).json({ success: false, message: e });
-// 						} else {
-// 							return res.status(200).json({ success: true, message: obj });
-// 						}
-// 					});
-// 				}
-// 			});
-// 		}
-// 	});
-// });
-
-// router.post('/:userId/moviesSwiperDislike/:movieId', function(req, res, next) {
-// 	User.findById(req.params.userId, (err, user) => {
-// 		if (e) {
-// 			console.log(e);
-// 			return res.status(500).json({ success: false, message: e });
-// 		} else {
-// 			console.log(user);
-// 			Movie.findById(req.params.movieId, (err, movie) => {
-// 				if (e) {
-// 					console.log(e);
-// 					return res.status(500).json({ success: false, message: e });
-// 				} else {
-// 					if (user.account.moviesSwiperDisliked.indexOf(movie._id) === -1) {
-// 						user.account.moviesSwiperDisliked.push(movie._id);
-// 					} else {
-// 						console.log('le film existe déjà dans les Disliked');
-// 					}
-// 					user.save((e, obj) => {
-// 						if (e) {
-// 							return res.status(500).json({ success: false, message: e });
-// 						}
-// 						return res.status(200).json({ success: true, message: obj });
-// 					});
-// 				}
-// 			});
-// 		}
-// 	});
 // });
 
 // router.post('/:userId/sendBuddyRequest/:buddyId', function(req, res, next) {

@@ -28,6 +28,7 @@ const UserSchema = new mongoose.Schema({
 			longitude: Number,
 			timestamp: Number
 		},
+		loc: { type: { type: String }, coordinates: [Number] },
 		buddies: [
 			{
 				_id: {
@@ -43,23 +44,22 @@ const UserSchema = new mongoose.Schema({
 			id_message: mongoose.Schema.Types.ObjectId
 		}
 	],
-	swiper: {
-		moviesSwiperLiked: [
-			{
-				type: mongoose.Schema.Types.ObjectId,
-				ref: 'Movie'
-			}
-		],
-		moviesSwiperDisliked: [
-			{
-				type: mongoose.Schema.Types.ObjectId,
-				ref: 'Movie'
-			}
-		]
-	},
+	swipeLike: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Movie'
+		}
+	],
+	swipePass: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Movie'
+		}
+	],
 	cId: String
 });
 
+UserSchema.index({ loc: '2dsphere' });
 UserSchema.plugin(passportLocalMongoose, {
 	usernameField: 'email', // L'authentification utilisera `email` plutôt `username`
 	session: false // L'API ne nécessite pas de sessions

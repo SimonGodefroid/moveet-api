@@ -244,6 +244,63 @@
 						}
 					}
 				);
+			},
+			swipeLike: (req, res) => {
+				User.findById(req.params.id, (err, user) => {
+					if (err) {
+						console.log(err);
+						return res.status(500).json({ success: false, message: err });
+					} else {
+						console.log(user);
+						Movie.findById(req.params.movieid, (err, movie) => {
+							if (err) {
+								console.log(err);
+								return res.status(500).json({ success: false, message: err });
+							} else {
+								if (user.swipeLike.indexOf(movie._id) === -1) {
+									user.account.moviesSwiperLiked.push(movie._id);
+								} else {
+									console.log('le film existe déjà dans les Liked');
+								}
+								user.save((err, obj) => {
+									if (err) {
+										return res.status(500).json({ success: false, message: err });
+									} else {
+										return res.status(200).json({ success: true, message: obj });
+									}
+								});
+							}
+						});
+					}
+				});
+			},
+			swipePass: (req, res) => {
+				User.findById(req.params.id, (err, user) => {
+					if (err) {
+						console.log(err);
+						return res.status(500).json({ success: false, message: err });
+					} else {
+						console.log(user);
+						Movie.findById(req.params.movieid, (err, movie) => {
+							if (err) {
+								console.log(err);
+								return res.status(500).json({ success: false, message: err });
+							} else {
+								if (user.account.moviesSwiperDisliked.indexOf(movie._id) === -1) {
+									user.account.moviesSwiperDisliked.push(movie._id);
+								} else {
+									console.log('le film existe déjà dans les Disliked');
+								}
+								user.save((err, obj) => {
+									if (err) {
+										return res.status(500).json({ success: false, message: err });
+									}
+									return res.status(200).json({ success: true, message: obj });
+								});
+							}
+						});
+					}
+				});
 			}
 		};
 	};

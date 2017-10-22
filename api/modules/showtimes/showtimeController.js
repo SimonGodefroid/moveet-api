@@ -15,9 +15,9 @@
 						theaters: !req.query.theaters ? '' : req.query.theaters
 					},
 					(e, results) => {
-						if (e) {
-							console.log('Error : ' + e);
-							return res.status(500).json({ succes: false, message: e });
+						if (err) {
+							console.log('Error : ' + err);
+							return res.status(500).json({ succes: false, message: err });
 						}
 						res.status(200).json({
 							success: true,
