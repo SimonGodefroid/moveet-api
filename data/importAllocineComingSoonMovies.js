@@ -187,6 +187,7 @@ const getInfo = movie => {
 							value: !movie.language ? 'language' : movie.language.$
 						}
 					],
+					color: movie.color,
 					castingShort: movie.castingShort,
 					trailer: movie.trailer,
 					trailerEmbed: movie.trailerEmbed,

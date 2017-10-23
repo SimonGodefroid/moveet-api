@@ -36,7 +36,7 @@ let swaggerDefinition = {
 		description: 'Moveet API documentation'
 	},
 	host: hostVar,
-	basePath: '/'
+	basePath: '/api'
 };
 
 let options = {
@@ -48,6 +48,7 @@ let swaggerSpec = swaggerJSDoc(options);
 /////////////////////////////////////////////////////////////////////////////////////
 // MONGOOSE /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
+mongoose.Promise = global.Promise;
 mongoose.connect(process.env.MONGODB_URI);
 mongoose.connection.on('error', () => {
 	console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
@@ -106,6 +107,7 @@ app.get('/swagger.json', (req, res) => {
 // require('./api/modules/auth/authRoutes')(app);
 require('./api/modules/users/userRoutes')(app);
 require('./api/modules/movies/movieRoutes')(app);
+require('./api/modules/auth/authRoutes')(app);
 
 /////////////////////////////////////////////////////////////////////////////////////
 // CHOKIDAR /////////////////////////////////////////////////////////////////////////

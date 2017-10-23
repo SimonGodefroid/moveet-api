@@ -40,9 +40,7 @@ const MovieSchema = new mongoose.Schema({
 			value: String
 		}
 	],
-	castingShort: {
-		directors: String
-	},
+	castingShort: Object,
 	trailer: {
 		href: String
 	},

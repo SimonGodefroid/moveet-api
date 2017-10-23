@@ -258,7 +258,7 @@
 								return res.status(500).json({ success: false, message: err });
 							} else {
 								if (user.swipeLike.indexOf(movie._id) === -1) {
-									user.account.moviesSwiperLiked.push(movie._id);
+									user.swipeLike.push(movie._id);
 								} else {
 									console.log('le film existe déjà dans les Liked');
 								}
@@ -286,8 +286,8 @@
 								console.log(err);
 								return res.status(500).json({ success: false, message: err });
 							} else {
-								if (user.account.moviesSwiperDisliked.indexOf(movie._id) === -1) {
-									user.account.moviesSwiperDisliked.push(movie._id);
+								if (user.swipePass.indexOf(movie._id) === -1) {
+									user.swipePass.push(movie._id);
 								} else {
 									console.log('le film existe déjà dans les Disliked');
 								}
