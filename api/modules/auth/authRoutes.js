@@ -9,7 +9,7 @@ module.exports = app => {
   * /v1/auth/signup:
   *    get: 
   *     tags:
-  *     - movies
+  *     - auth
   *     summary: Sign up an account
   *     operationId: signUp
   *     produces:
@@ -18,18 +18,15 @@ module.exports = app => {
   *     - in: formData
   *       name: account.username
   *       required: true
-	*       type: string
-	*			  description: user's username
+  *       type: string
   *     - in: formData
   *       name: email
   *       required: true
-	*       type: string
-	*			  description: user's email address
+  *       type: string
   *     - in: formData
   *       name: password
   *       required: true
-	*       type: string
-	*			  description: user's password
+  *       type: string
   *     responses:
   *       200:
   *         description: Fetched movies
