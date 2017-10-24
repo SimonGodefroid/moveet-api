@@ -66,8 +66,8 @@ app.use(express.static('public'));
 app.use(logger('dev'));
 app.use(helmet());
 app.use(compression());
-app.use(bodyParser.json({ limit: '15mb' }));
-app.use(bodyParser.urlencoded({ limit: '15mb', extended: true }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(expressValidator());
 app.use(
 	session({

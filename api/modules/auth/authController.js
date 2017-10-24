@@ -31,15 +31,17 @@
 				}
 			},
 			loginPost: (req, res, next) => {
-				req.assert('email', 'Email is not valid').isEmail();
-				req.assert('email', 'Email cannot be blank').notEmpty();
-				req.assert('password', 'Password cannot be blank').notEmpty();
-				req.sanitize('email').normalizeEmail({ remove_dots: false });
+				console.log('req.body', req.body);
+				// req.assert('email', 'Email is not valid').isEmail();
+				// req.assert('email', 'Email cannot be blank').notEmpty();
+				// req.assert('password', 'Password cannot be blank').notEmpty();
+				// req.sanitize('email').normalizeEmail({ remove_dots: false });
 				var errors = req.validationErrors();
 				if (errors) {
 					return res.status(400).send(errors);
 				}
 				User.findOne({ email: req.body.email }, (err, user) => {
+					console.log('coucou login');
 					if (!user) {
 						return res.status(401).send({
 							msg:
