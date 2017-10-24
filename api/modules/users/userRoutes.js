@@ -67,6 +67,34 @@ module.exports = app => {
   *       400:
   *         description: Error
 */
+	// returns list of buddies (all users minus the current user + 5 favorites)
+	app.route('/api/v1/buddies/:userid').get(Ctrl.listBuddies);
+	/**
+ * @swagger
+  * /v1/buddies/{id}:
+  *    get: 
+  *     tags:
+  *     - users
+  *     summary: Get the list of all users minus the current user and returns 5 favorites for each user
+  *     operationId: listBuddies
+  *     produces:
+  *     - application/json
+  *     parameters:
+  *     - in: header
+  *       name: x-access-token
+  *       required: false
+  *       type: string
+  *     - in: path
+  *       name: id
+  *       required: true
+  *       type: string
+  *       format: '[a-fA-F\\d]{24}'
+  *     responses:
+  *       200:
+  *         description: Fetched buddies
+  *       400:
+  *         description: Error
+*/
 	// returns favorites for user with id
 	app.route('/api/v1/users/:id([a-fA-F\\d]{24})/favorites').get(Ctrl.favoritesList);
 	/**

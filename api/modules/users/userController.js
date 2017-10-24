@@ -58,6 +58,51 @@
 					});
 			},
 			delete: (req, res) => {},
+			listBuddies: (req, res) => {
+				User.aggregate(
+					[
+						{
+							$match: {
+								_id: { $ne: mongoose.Types.ObjectId(req.params.userid) }
+							}
+						},
+						{
+							$project: {
+								account: 1,
+								fiveFav: { $slice: ['$account.favorites', 5] }
+							}
+						},
+						{
+							$lookup: {
+								from: 'movies',
+								localField: 'fiveFav',
+								foreignField: '_id',
+								as: 'fiveFavorites'
+							}
+						},
+						{
+							$project: {
+								'account.subscription': 1,
+								'account.age': 1,
+								'account.genre': 1,
+								'account.description': 1,
+								'account.picture': 1,
+								'account.location': 1,
+								'account.username': 1,
+								fiveFavorites: 1
+							}
+						}
+					],
+					(err, buddies) => {
+						if (err) {
+							console.log('err', err);
+							return res.status(500).json({ success: false, message: err });
+						} else {
+							return res.status(200).json({ success: true, count: buddies.length, message: buddies });
+						}
+					}
+				);
+			},
 			favoritesList: (req, res) => {
 				User.aggregate([
 					{ $match: { _id: mongoose.Types.ObjectId(req.params.id) } },
