@@ -67,6 +67,7 @@
 						console.log('An error occurred' + err);
 						return res.status(500).json({ success: false, message: err });
 					} else {
+						let result = object;
 						if (object.length > 0) {
 							result = object[0];
 						}
