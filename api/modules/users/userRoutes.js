@@ -7,316 +7,314 @@ module.exports = app => {
 	// const passportConfig = require('../../../config/passport');
 	// app.use(passportConfig.tokenAuthApi);
 	const cloudinary = require('cloudinary');
-
 	// returns list of users
 	app.route('/api/v1/users').get(Ctrl.list);
 	/**
- * @swagger
-  * /v1/users:
-  *    get: 
-  *     tags:
-  *     - users
-  *     summary: Lists all the users
-  *     operationId: listUsers
-  *     produces:
-  *     - application/json
-  *     parameters:
-  *     - in: header
-  *       name: x-access-token
-  *       required: false
-  *       type: string
-  *     - in: query
-  *       name: limit
-  *       required: false
-  *       type: integer
-  *     - in: query
-  *       name: page
-  *       required: false
-  *       type: integer
-  *     responses:
-  *       200:
-  *         description: Fetched users
-  *       400:
-  *         description: Error
-*/
+  * @swagger
+   * /v1/users:
+   *    get: 
+   *     tags:
+   *     - users
+   *     summary: Lists all the users
+   *     operationId: listUsers
+   *     produces:
+   *     - application/json
+   *     parameters:
+   *     - in: header
+   *       name: x-access-token
+   *       required: false
+   *       type: string
+   *     - in: query
+   *       name: limit
+   *       required: false
+   *       type: integer
+   *     - in: query
+   *       name: page
+   *       required: false
+   *       type: integer
+   *     responses:
+   *       200:
+   *         description: Fetched users
+   *       400:
+   *         description: Error
+  */
 	// returns user by id
 	app.route('/api/v1/users/:id([a-fA-F\\d]{24})').get(Ctrl.read);
 	/**
- * @swagger
-  * /v1/users/{id}:
-  *    get: 
-  *     tags:
-  *     - users
-  *     summary: Get a user by its id
-  *     operationId: readUser
-  *     produces:
-  *     - application/json
-  *     parameters:
-  *     - in: header
-  *       name: x-access-token
-  *       required: false
-  *       type: string
-  *     - in: path
-  *       name: id
-  *       required: true
-  *       type: string
-  *       format: '[a-fA-F\\d]{24}'
-  *     responses:
-  *       200:
-  *         description: Fetched user
-  *       400:
-  *         description: Error
-*/
+  * @swagger
+   * /v1/users/{id}:
+   *    get: 
+   *     tags:
+   *     - users
+   *     summary: Get a user by its id
+   *     operationId: readUser
+   *     produces:
+   *     - application/json
+   *     parameters:
+   *     - in: header
+   *       name: x-access-token
+   *       required: false
+   *       type: string
+   *     - in: path
+   *       name: id
+   *       required: true
+   *       type: string
+   *       format: '[a-fA-F\\d]{24}'
+   *     responses:
+   *       200:
+   *         description: Fetched user
+   *       400:
+   *         description: Error
+  */
 	// returns list of buddies (all users minus the current user + 5 favorites)
 	app.route('/api/v1/buddies/:userid').get(Ctrl.listBuddies);
 	/**
- * @swagger
-  * /v1/buddies/{id}:
-  *    get: 
-  *     tags:
-  *     - users
-  *     summary: Get the list of all users minus the current user and returns 5 favorites for each user
-  *     operationId: listBuddies
-  *     produces:
-  *     - application/json
-  *     parameters:
-  *     - in: header
-  *       name: x-access-token
-  *       required: false
-  *       type: string
-  *     - in: path
-  *       name: id
-  *       required: true
-  *       type: string
-  *       format: '[a-fA-F\\d]{24}'
-  *     responses:
-  *       200:
-  *         description: Fetched buddies
-  *       400:
-  *         description: Error
-*/
+  * @swagger
+   * /v1/buddies/{id}:
+   *    get: 
+   *     tags:
+   *     - users
+   *     summary: Get the list of all users minus the current user and returns 5 favorites for each user
+   *     operationId: listBuddies
+   *     produces:
+   *     - application/json
+   *     parameters:
+   *     - in: header
+   *       name: x-access-token
+   *       required: false
+   *       type: string
+   *     - in: path
+   *       name: id
+   *       required: true
+   *       type: string
+   *       format: '[a-fA-F\\d]{24}'
+   *     responses:
+   *       200:
+   *         description: Fetched buddies
+   *       400:
+   *         description: Error
+  */
 	// returns favorites for user with id
 	app.route('/api/v1/users/:id([a-fA-F\\d]{24})/favorites').get(Ctrl.favoritesList);
 	/**
- * @swagger
-  * /v1/users/{id}/favorites:
-  *    get: 
-  *     tags:
-  *     - favorites
-  *     summary: Get the list of a user's favorites
-  *     operationId: listFavorites
-  *     produces:
-  *     - application/json
-  *     parameters:
-  *     - in: header
-  *       name: x-access-token
-  *       required: false
-  *       type: string
-  *     - in: path
-  *       name: id
-  *       required: true
-  *       type: string
-  *       format: '[a-fA-F\\d]{24}'
-  *     responses:
-  *       200:
-  *         description: Fetched favorite movies
-  *       400:
-  *         description: Error
-*/
+  * @swagger
+   * /v1/users/{id}/favorites:
+   *    get: 
+   *     tags:
+   *     - favorites
+   *     summary: Get the list of a user's favorites
+   *     operationId: listFavorites
+   *     produces:
+   *     - application/json
+   *     parameters:
+   *     - in: header
+   *       name: x-access-token
+   *       required: false
+   *       type: string
+   *     - in: path
+   *       name: id
+   *       required: true
+   *       type: string
+   *       format: '[a-fA-F\\d]{24}'
+   *     responses:
+   *       200:
+   *         description: Fetched favorite movies
+   *       400:
+   *         description: Error
+  */
 	// returns the users for which favorites matches the user's favorites
 	app.route('/api/v1/users/:id([a-fA-F\\d]{24})/matches').get(Ctrl.matchesList);
 	/**
- * @swagger
-  * /v1/users/{id}/matches:
-  *    get: 
-  *     tags:
-  *     - matches
-  *     summary: Get a list of users that have favorites in common with the specified user, the matching movies are also fetched
-  *     operationId: listMatches
-  *     produces:
-  *     - application/json
-  *     parameters:
-  *     - in: header
-  *       name: x-access-token
-  *       required: false
-  *       type: string
-  *     - in: path
-  *       name: id
-  *       required: true
-  *       type: string
-  *       format: '[a-fA-F\\d]{24}'
-  *     responses:
-  *       200:
-  *         description: Fetched matching users
-  *       400:
-  *         description: Error
-*/
+  * @swagger
+   * /v1/users/{id}/matches:
+   *    get: 
+   *     tags:
+   *     - matches
+   *     summary: Get a list of users that have favorites in common with the specified user, the matching  movies are also fetched
+   *     operationId: listMatches
+   *     produces:
+   *     - application/json
+   *     parameters:
+   *     - in: header
+   *       name: x-access-token
+   *       required: false
+   *       type: string
+   *     - in: path
+   *       name: id
+   *       required: true
+   *       type: string
+   *       format: '[a-fA-F\\d]{24}'
+   *     responses:
+   *       200:
+   *         description: Fetched matching users
+   *       400:
+   *         description: Error
+  */
 	// returns a list of buddies that want to see the same movie as the given user
 	app.route('/api/v1/users/:id([a-fA-F\\d]{24})/findbuddy/:movieid([a-fA-F\\d]{24})').get(Ctrl.buddyFinder);
 	/**
- * @swagger
-  * /v1/users/{id}/findbuddy/{movieid}:
-  *    get: 
-  *     tags:
-  *     - users
-  *     summary: Get a list of users that have a given movie in their favorites
-  *     operationId: findBuddy
-  *     produces:
-  *     - application/json
-  *     parameters:
-  *     - in: header
-  *       name: x-access-token
-  *       required: false
-  *       type: string
-  *     - in: path
-  *       name: id
-  *       required: true
-  *       type: string
-  *       format: '[a-fA-F\\d]{24}'
-  *     - in: path
-  *       name: movieid
-  *       required: true
-  *       type: string
-  *       format: '[a-fA-F\\d]{24}'
-  *     responses:
-  *       200:
-  *         description: Fetched buddies
-  *       400:
-  *         description: Error
-*/
+  * @swagger
+   * /v1/users/{id}/findbuddy/{movieid}:
+   *    get: 
+   *     tags:
+   *     - users
+   *     summary: Get a list of users that have a given movie in their favorites
+   *     operationId: findBuddy
+   *     produces:
+   *     - application/json
+   *     parameters:
+   *     - in: header
+   *       name: x-access-token
+   *       required: false
+   *       type: string
+   *     - in: path
+   *       name: id
+   *       required: true
+   *       type: string
+   *       format: '[a-fA-F\\d]{24}'
+   *     - in: path
+   *       name: movieid
+   *       required: true
+   *       type: string
+   *       format: '[a-fA-F\\d]{24}'
+   *     responses:
+   *       200:
+   *         description: Fetched buddies
+   *       400:
+   *         description: Error
+  */
 	// adds/removes a movie to the list of favorites
 	app.route('/api/v1/users/:id([a-fA-F\\d]{24})/favorites/:movieid([a-fA-F\\d]{24})').post(Ctrl.favoritesToggle);
 	/**
- * @swagger
-  * /v1/users/{id}/favorites/{movieid}:
-  *    post: 
-  *     tags:
-  *     - favorites
-  *     summary: Add/Remove a movie from the list of favorites of a user
-  *     operationId: toggleFavorite
-  *     produces:
-  *     - application/json
-  *     parameters:
-  *     - in: header
-  *       name: x-access-token
-  *       required: false
-  *       type: string
-  *     - in: path
-  *       name: id
-  *       required: true
-  *       type: string
-  *       format: '[a-fA-F\\d]{24}'
-  *     - in: path
-  *       name: movieid
-  *       required: true
-  *       type: string
-  *       format: '[a-fA-F\\d]{24}'
-  *     responses:
-  *       200:
-  *         description: Updated user
-  *       400:
-  *         description: Error
-*/
+  * @swagger
+   * /v1/users/{id}/favorites/{movieid}:
+   *    post: 
+   *     tags:
+   *     - favorites
+   *     summary: Add/Remove a movie from the list of favorites of a user
+   *     operationId: toggleFavorite
+   *     produces:
+   *     - application/json
+   *     parameters:
+   *     - in: header
+   *       name: x-access-token
+   *       required: false
+   *       type: string
+   *     - in: path
+   *       name: id
+   *       required: true
+   *       type: string
+   *       format: '[a-fA-F\\d]{24}'
+   *     - in: path
+   *       name: movieid
+   *       required: true
+   *       type: string
+   *       format: '[a-fA-F\\d]{24}'
+   *     responses:
+   *       200:
+   *         description: Updated user
+   *       400:
+   *         description: Error
+  */
 	// adds a movie to the list of swiper's likes
 	app.route('/api/v1/users/:id([a-fA-F\\d]{24})/swipelike/:movieid([a-fA-F\\d]{24})').post(Ctrl.swipeLike);
 	/**
- * @swagger
-  * /v1/users/{id}/swipelike/{movieid}:
-  *    post: 
-  *     tags:
-  *     - swiper
-  *     summary: Add a movie from the list of swipe like
-  *     operationId: swipeLike
-  *     produces:
-  *     - application/json
-  *     parameters:
-  *     - in: header
-  *       name: x-access-token
-  *       required: false
-  *       type: string
-  *     - in: path
-  *       name: id
-  *       required: true
-  *       type: string
-  *       format: '[a-fA-F\\d]{24}'
-  *     - in: path
-  *       name: movieid
-  *       required: true
-  *       type: string
-  *       format: '[a-fA-F\\d]{24}'
-  *     responses:
-  *       200:
-  *         description: Updated user
-  *       400:
-  *         description: Error
-*/
-
+  * @swagger
+   * /v1/users/{id}/swipelike/{movieid}:
+   *    post: 
+   *     tags:
+   *     - swiper
+   *     summary: Add a movie from the list of swipe like
+   *     operationId: swipeLike
+   *     produces:
+   *     - application/json
+   *     parameters:
+   *     - in: header
+   *       name: x-access-token
+   *       required: false
+   *       type: string
+   *     - in: path
+   *       name: id
+   *       required: true
+   *       type: string
+   *       format: '[a-fA-F\\d]{24}'
+   *     - in: path
+   *       name: movieid
+   *       required: true
+   *       type: string
+   *       format: '[a-fA-F\\d]{24}'
+   *     responses:
+   *       200:
+   *         description: Updated user
+   *       400:
+   *         description: Error
+  */
 	// adds a movie to the list of swiper's pass
 	app.route('/api/v1/users/:id([a-fA-F\\d]{24})/swipepass/:movieid([a-fA-F\\d]{24})').post(Ctrl.swipePass);
 	/**
- * @swagger
-  * /v1/users/{id}/swipepass/{movieid}:
-  *    post: 
-  *     tags:
-  *     - swiper
-  *     summary: Add a movie from the list of swipe pass
-  *     operationId: swipePass
-  *     produces:
-  *     - application/json
-  *     parameters:
-  *     - in: header
-  *       name: x-access-token
-  *       required: false
-  *       type: string
-  *     - in: path
-  *       name: id
-  *       required: true
-  *       type: string
-  *       format: '[a-fA-F\\d]{24}'
-  *     - in: path
-  *       name: movieid
-  *       required: true
-  *       type: string
-  *       format: '[a-fA-F\\d]{24}'
-  *     responses:
-  *       200:
-  *         description: Updated user
-  *       400:
-  *         description: Error
-*/
+  * @swagger
+   * /v1/users/{id}/swipepass/{movieid}:
+   *    post: 
+   *     tags:
+   *     - swiper
+   *     summary: Add a movie from the list of swipe pass
+   *     operationId: swipePass
+   *     produces:
+   *     - application/json
+   *     parameters:
+   *     - in: header
+   *       name: x-access-token
+   *       required: false
+   *       type: string
+   *     - in: path
+   *       name: id
+   *       required: true
+   *       type: string
+   *       format: '[a-fA-F\\d]{24}'
+   *     - in: path
+   *       name: movieid
+   *       required: true
+   *       type: string
+   *       format: '[a-fA-F\\d]{24}'
+   *     responses:
+   *       200:
+   *         description: Updated user
+   *       400:
+   *         description: Error
+  */
 	// adds a movie to the list of swiper's pass
 	app.route('/api/v1/users/:id([a-fA-F\\d]{24})/swiperdeck').get(Ctrl.swiperDeck);
 	/**
- * @swagger
-  * /v1/users/{id}/swiperdeck:
-  *    get: 
-  *     tags:
-  *     - swiper
-  *     summary: Get the list of movies for the swiper
-  *     operationId: swipePass
-  *     produces:
-  *     - application/json
-  *     parameters:
-  *     - in: header
-  *       name: x-access-token
-  *       required: false
-  *       type: string
-  *     - in: path
-  *       name: id
-  *       required: true
-  *       type: string
-  *       format: '[a-fA-F\\d]{24}'
-  *     - in: path
-  *       name: movieid
-  *       required: true
-  *       type: string
-  *       format: '[a-fA-F\\d]{24}'
-  *     responses:
-  *       200:
-  *         description: Updated user
-  *       400:
-  *         description: Error
-*/
+  * @swagger
+   * /v1/users/{id}/swiperdeck:
+   *    get: 
+   *     tags:
+   *     - swiper
+   *     summary: Get the list of movies for the swiper
+   *     operationId: swipePass
+   *     produces:
+   *     - application/json
+   *     parameters:
+   *     - in: header
+   *       name: x-access-token
+   *       required: false
+   *       type: string
+   *     - in: path
+   *       name: id
+   *       required: true
+   *       type: string
+   *       format: '[a-fA-F\\d]{24}'
+   *     - in: path
+   *       name: movieid
+   *       required: true
+   *       type: string
+   *       format: '[a-fA-F\\d]{24}'
+   *     responses:
+   *       200:
+   *         description: Updated user
+   *       400:
+   *         description: Error
+  */
 };
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -324,8 +322,8 @@ module.exports = app => {
 /////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * @swagger
- * definitions:
+  * @swagger
+  * definitions:
   *  User:
   *    type: object
   *    properties:

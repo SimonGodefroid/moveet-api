@@ -21,7 +21,6 @@
 						return res.status(500).json({ success: false, message: err });
 					});
 			},
-			create: (req, res) => {},
 			read: (req, res) => {
 				let query = [{ $match: { _id: mongoose.Types.ObjectId(req.params.id) } }];
 				User.aggregate(query)
@@ -58,7 +57,6 @@
 						return res.status(500).json({ success: false, message: err });
 					});
 			},
-			delete: (req, res) => {},
 			listBuddies: (req, res) => {
 				User.aggregate(
 					[

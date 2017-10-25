@@ -33,7 +33,9 @@ let swaggerDefinition = {
 	info: {
 		title: 'Moveet API',
 		version: '1.0.0',
-		description: 'Moveet API documentation'
+		description: `This is the documentation for the Moveet API. Moveet is a unique platform that connects movie lovers to help them share their passion with people in real life (IRL), find out more about us at http://moveet.simongodefroid.com`,
+		termsOfService: `http://swagger.io/terms/`,
+		contact: { email: `simon.godefroid@gmail.com` }
 	},
 	host: hostVar,
 	basePath: '/api'

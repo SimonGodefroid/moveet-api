@@ -4,70 +4,74 @@ module.exports = app => {
 	// app.use(passportConfig.tokenAuthApi);
 	app.route('/api/v1/movies').get(Ctrl.list);
 	/**
- * @swagger
-  * /v1/movies:
-  *    get: 
-  *     tags:
-  *     - movies
-  *     summary: Lists all the movies
-  *     operationId: listMovies
-  *     produces:
-  *     - application/json
-  *     parameters:
-  *     - in: header
-  *       name: x-access-token
-  *       required: false
-  *       type: string
-  *     - in: query
-  *       name: limit
-  *       required: false
-  *       type: integer
-  *     - in: query
-  *       name: page
-  *       required: false
-  *       type: integer
-  *     responses:
-  *       200:
-  *         description: Fetched movies
-  *       400:
-  *         description: Error
-*/
+  * @swagger
+   * /v1/movies:
+   *    get: 
+   *     tags:
+   *     - movies
+   *     summary: Lists all the movies
+   *     operationId: listMovies
+   *     produces:
+   *     - application/json
+   *     parameters:
+   *     - in: header
+   *       name: x-access-token
+   *       required: false
+   *       type: string
+   *     - in: query
+   *       name: limit
+   *       required: false
+   *       type: integer
+   *     - in: query
+   *       name: page
+   *       required: false
+   *       type: integer
+   *     responses:
+   *       200:
+   *         description: Fetched movies
+   *       400:
+   *         description: Error
+  */
 	app.route('/api/v1/movies/:id([a-fA-F\\d]{24})').get(Ctrl.read);
 	/**
- * @swagger
-  * /v1/movies/{id}:
-  *    get: 
-  *     tags:
-  *     - movies
-  *     summary: Get a movie by its id
-  *     operationId: readMovie
-  *     produces:
-  *     - application/json
-  *     parameters:
-  *     - in: header
-  *       name: x-access-token
-  *       required: false
-  *       type: string
-  *     - in: path
-  *       name: id
-  *       required: true
-  *       type: string
-  *       format: '[a-fA-F\\d]{24}'
-  *     responses:
-  *       200:
-  *         description: Fetched movie
-  *       400:
-  *         description: Error
-*/
+  * @swagger
+   * /v1/movies/{id}:
+   *    get: 
+   *     tags:
+   *     - movies
+   *     summary: Get a movie by its id
+   *     operationId: readMovie
+   *     produces:
+   *     - application/json
+   *     parameters:
+   *     - in: header
+   *       name: x-access-token
+   *       required: false
+   *       type: string
+   *     - in: path
+   *       name: id
+   *       required: true
+   *       type: string
+   *       format: '[a-fA-F\\d]{24}'
+   *     responses:
+   *       200:
+   *         description: Fetched movie
+   *       400:
+   *         description: Error
+  */
 };
 
 // 					media: { $ne: 'nothing here' }
 // 			.sort({ 'statistics.theaterCount': 'descending' })
 // 			.sort({ 'release.releaseDate': 'ascending' })
 
+/////////////////////////////////////////////////////////////////////////////////////
+// SWAGGER DEFINITIONS //////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
+
 /**
- * @swagger
- * definitions:
+  * @swagger
+  * definitions:
   *  Movie:
   *    type: object
   *    properties:
