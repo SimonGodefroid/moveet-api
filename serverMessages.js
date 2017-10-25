@@ -19,7 +19,6 @@ const bodyParser = require('body-parser');
 app.use(helmet());
 app.use(compression());
 app.use(bodyParser.json());
-
 app.get('/chat', (req, res) => {
 	res.status(200).json({
 		success: true,
@@ -115,8 +114,7 @@ io.on('connection', client => {
 					});
 					return;
 				} else {
-					console.log('on n a pas trouvé le user, donc c est son premier talk');
-
+					console.log("on n a pas trouvé le user, donc c'est son premier talk");
 					const user = speakers.userId;
 					const buddy = speakers.speakerId;
 					// Create a new entry in Message DB

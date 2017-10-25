@@ -8,11 +8,11 @@ mongoose.connect(process.env.MONGODB_URI, err => {
 	}
 });
 
-const Theater = require('../models/Theater.js');
+const Theater = require('../api/modules/theaters/theaterModel');
 var allMovieTheaters = require('../save/tmp/allMovieTheaters.json');
 let ids = [];
 
-allMovieTheaters.forEach(function(theater) {
+allMovieTheaters.forEach(theater => {
 	if (ids.indexOf(theater.code) === -1) {
 		ids.push(theater.code);
 
@@ -46,12 +46,12 @@ allMovieTheaters.forEach(function(theater) {
 				}
 			]
 		});
-		var theater = new Theater(data);
-		theater.save(function(err, obj) {
+		// var theater = new Theater(data);
+		data.save((err, obj) => {
 			if (err) {
 				console.log('error saving theater');
 			} else {
-				//console.log("saved movie");
+				console.log('saved Theater');
 			}
 		});
 	} else {
@@ -59,6 +59,6 @@ allMovieTheaters.forEach(function(theater) {
 	}
 });
 
-setTimeout(function() {
+setTimeout(() => {
 	mongoose.connection.close();
 }, 15000);

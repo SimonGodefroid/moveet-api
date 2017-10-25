@@ -23,7 +23,8 @@
 			},
 			create: (req, res) => {},
 			read: (req, res) => {
-				User.aggregate([{ $match: { _id: mongoose.Types.ObjectId(req.params.id) } }])
+				let query = [{ $match: { _id: mongoose.Types.ObjectId(req.params.id) } }];
+				User.aggregate(query)
 					.exec()
 					.then(user => {
 						let result = user;
@@ -344,6 +345,71 @@
 								});
 							}
 						});
+					}
+				});
+			},
+			swiperDeck: (req, res) => {
+				User.findById(req.params.id).exec((err, user) => {
+					if (err) {
+						console.log('An error occurred' + err);
+						return res.status(500).json({ success: false, message: user });
+					} else {
+						let query = user.account.favorites.concat(user.swipeLike, user.swipePass);
+						Movie.agregate(
+							[
+								{
+									$match: {
+										$and: [
+											{ _id: { $nin: query } },
+											{ statusList: 'nowshowing' },
+											{ 'statistics.theaterCount': { $gt: 10 } }
+										]
+									}
+								},
+								{
+									$sort: {
+										'statistics.theaterCount': 'descending',
+										'release.releaseDate': 'descending'
+									}
+								},
+								{ $limit: 100 }
+							],
+							(err, NowShowingMovies) => {
+								if (err) {
+									return res.status(500).json({ success: false, message: user });
+								} else {
+									Movie.agregate(
+										[
+											{
+												$match: {
+													$and: [{ _id: { $nin: query } }, { statusList: 'comingsoon' }]
+												}
+											},
+											{
+												$sort: {
+													'statistics.theaterCount': 'descending',
+													'release.releaseDate': 'descending'
+												}
+											},
+											{ $limit: 100 }
+										],
+										(err, ComingSoonMovies) => {
+											if (err) {
+												console.log('An error occurred' + err);
+												return res.status(500).json({ success: false, message: user });
+											} else {
+												let moviesDeck = NowShowingMovies.concat(ComingSoonMovies);
+												res.status(200).json({
+													sucess: true,
+													message: moviesDeck,
+													total: moviesDeck.length
+												});
+											}
+										}
+									);
+								}
+							}
+						);
 					}
 				});
 			}

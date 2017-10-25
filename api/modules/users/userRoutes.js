@@ -102,7 +102,7 @@ module.exports = app => {
   * /v1/users/{id}/favorites:
   *    get: 
   *     tags:
-  *     - users
+  *     - favorites
   *     summary: Get the list of a user's favorites
   *     operationId: listFavorites
   *     produces:
@@ -130,7 +130,7 @@ module.exports = app => {
   * /v1/users/{id}/matches:
   *    get: 
   *     tags:
-  *     - users
+  *     - matches
   *     summary: Get a list of users that have favorites in common with the specified user, the matching movies are also fetched
   *     operationId: listMatches
   *     produces:
@@ -191,8 +191,8 @@ module.exports = app => {
   * /v1/users/{id}/favorites/{movieid}:
   *    post: 
   *     tags:
-  *     - users
-  *     summary: Add/Remove a movie from the list of favorites
+  *     - favorites
+  *     summary: Add/Remove a movie from the list of favorites of a user
   *     operationId: toggleFavorite
   *     produces:
   *     - application/json
@@ -224,7 +224,7 @@ module.exports = app => {
   * /v1/users/{id}/swipelike/{movieid}:
   *    post: 
   *     tags:
-  *     - users
+  *     - swiper
   *     summary: Add a movie from the list of swipe like
   *     operationId: swipeLike
   *     produces:
@@ -258,8 +258,41 @@ module.exports = app => {
   * /v1/users/{id}/swipepass/{movieid}:
   *    post: 
   *     tags:
-  *     - users
+  *     - swiper
   *     summary: Add a movie from the list of swipe pass
+  *     operationId: swipePass
+  *     produces:
+  *     - application/json
+  *     parameters:
+  *     - in: header
+  *       name: x-access-token
+  *       required: false
+  *       type: string
+  *     - in: path
+  *       name: id
+  *       required: true
+  *       type: string
+  *       format: '[a-fA-F\\d]{24}'
+  *     - in: path
+  *       name: movieid
+  *       required: true
+  *       type: string
+  *       format: '[a-fA-F\\d]{24}'
+  *     responses:
+  *       200:
+  *         description: Updated user
+  *       400:
+  *         description: Error
+*/
+	// adds a movie to the list of swiper's pass
+	app.route('/api/v1/users/:id([a-fA-F\\d]{24})/swiperdeck').get(Ctrl.swiperDeck);
+	/**
+ * @swagger
+  * /v1/users/{id}/swiperdeck:
+  *    get: 
+  *     tags:
+  *     - swiper
+  *     summary: Get the list of movies for the swiper
   *     operationId: swipePass
   *     produces:
   *     - application/json
