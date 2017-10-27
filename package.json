@@ -5,6 +5,7 @@
 	"main": "index.js",
 	"scripts": {
 		"start": "nodemon server.js",
+		"deploy": "git push && git push heroku master",
 		"chat": "nodemon serverMessages.js",
 		"importMovies": "node data/importAllocineNowShowingMovies.js  && node data/importAllocineComingSoonMovies.js",
 		"importUsers": "node data/dropUserCollection.js && node data/importUsers.js",
