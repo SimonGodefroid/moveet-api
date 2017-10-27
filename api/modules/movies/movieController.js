@@ -32,7 +32,8 @@
 				!req.query.limit || isNaN(req.query.limit) ? (limit = 100) : (limit = parseInt(req.query.limit));
 				if (req.query.sort && (req.query.sort !== '' || Object.keys(req.query.sort).length > 0)) {
 					for (let i in Object.keys(req.query.sort)) {
-						sort[Object.keys(req.query.sort)[i]] = parseInt(Object.values(req.query.sort)[i]);
+						// sort[Object.keys(req.query.sort)[i]] = parseInt(Object.values(req.query.sort)[i]);
+						sort[Object.keys(req.query.sort)[i]] = parseInt(_.values(req.query.sort)[i]);
 					}
 					query.push({ $sort: sort });
 				}
