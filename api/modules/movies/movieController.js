@@ -15,17 +15,31 @@
 				let match = {};
 				let q = {};
 				let matchKeys = req.query ? _.without(Object.keys(req.query), 'limit', 'page', 'sort') : [];
-				if (matchKeys.length > 0) {
+				if (matchKeys.length > 1) {
+					console.log('coucou');
 					q.$and = [];
 					for (let i in matchKeys) {
 						match = {};
-						match[matchKeys[i]] = {};
-						match[matchKeys[i]]['$in'] = [];
-						let values = req['query'][matchKeys[i]].split(',');
+						if (req['query'][matchKeys[i]] !== '') {
+							match[matchKeys[i]] = {};
+							match[matchKeys[i]]['$in'] = [];
+							let values = req['query'][matchKeys[i]].split(',');
+							console.log('values', req['query'][matchKeys[i]]);
+							values.map(val => {
+								return match[matchKeys[i]]['$in'].push(parseInt(val) || val);
+							});
+							q.$and.push(match);
+						}
+					}
+				} else if (matchKeys.length === 1) {
+					if (req['query'][matchKeys[0]] !== '') {
+						q[matchKeys[0]] = {};
+						q[matchKeys[0]]['$in'] = [];
+						let values = req['query'][matchKeys[0]].split(',');
 						values.map(val => {
-							return match[matchKeys[i]]['$in'].push(parseInt(val) || val);
+							return q[matchKeys[0]]['$in'].push(parseInt(val) || val);
 						});
-						q.$and.push(match);
+						console.log('q', q);
 					}
 				}
 				!req.query.page || isNaN(req.query.page) ? (skip = 1) : (skip = parseInt(req.query.page));
