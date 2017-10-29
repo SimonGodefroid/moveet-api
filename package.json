@@ -7,8 +7,9 @@
 		"start": "nodemon server.js",
 		"deploy": "git push && git push heroku master",
 		"chat": "nodemon serverMessages.js",
-		"importMovies": "node data/importAllocineNowShowingMovies.js  && node data/importAllocineComingSoonMovies.js",
-		"importUsers": "node data/dropUserCollection.js && node data/importUsers.js",
+		"moviesImport": "node data/importNowShowingMovies.js  && node data/importComingSoonMovies.js",
+		"theateresImport": "node data/importAllMovieTheaters.js",
+		"userImport": "node data/dropUserCollection.js && node data/importUsers.js",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"saveAllo":
 			"concurrently \"node save/saveAllComingSoonMoviesAllocine.js\" \"node save/saveAllNowShowingMoviesAllocine.js\""

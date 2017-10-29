@@ -83,7 +83,7 @@
 							$project: {
 								'account.subscription': 1,
 								'account.age': 1,
-								'account.genre': 1,
+								'account.gender': 1,
 								'account.description': 1,
 								'account.picture': 1,
 								'account.location': 1,

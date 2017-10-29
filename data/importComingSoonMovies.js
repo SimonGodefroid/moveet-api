@@ -200,14 +200,15 @@ const getInfo = movie => {
 					if (err) {
 						console.log('error saving movie', err);
 					} else {
+						console.log('success');
 					}
 				});
 			} else {
 				console.log('erreur', error);
 				console.log('erreur dans la requête sur film avec id', movie.code, movie.statusList);
-				failedRequestsComingSoonMovies.push({
-					movie
-				});
+				let failedMovie = { movie };
+				failedRequestsComingSoonMovies.push(failedMovie);
+				console.log('failedRequestsNowShowingMovies so far:', failedRequestsComingSoonMovies.length);
 			}
 		}
 	);

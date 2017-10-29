@@ -8,23 +8,22 @@ var _ = require('lodash');
 var jsonfile = require('jsonfile');
 var jsonfailedRequestsNowShowingMovies = './save/tmp/failedRequestsNowShowingMovies.json';
 mongoose.Promise = global.Promise;
-mongoose.connect(process.env.MONGODB_URI, function(err) {
-	mongoose.connection.db.dropDatabase();
+mongoose.connect(process.env.MONGODB_URI, err => {
+	// mongoose.connection.db.dropDatabase();
 	if (err) {
 		console.error('Could not connect to mongodb.');
 	}
 });
 
-var User = require('../models/User.js');
-var AllocineMovie = require('../models/AllocineMovie.js');
+const User = require('../api/modules/users/userModel');
+const Movie = require('../api/modules/movies/movieModel');
 
-var users = require('./users.json');
-//var moviesAllocineComingSoon = require("../save/tmp/moviesAllocineComingSoon.json");
-var moviesAllocineNowShowing = require('../save/tmp/moviesAllocineNowShowing.json');
-var movieInfo = [];
-var failedRequestsNowShowingMovies = [];
+const users = require('./users.json');
+const moviesNowShowing = require('../save/tmp/moviesNowShowing.json');
+let movieInfo = [];
+let failedRequestsNowShowingMovies = [];
 let ids = [];
-var simonGenre = [];
+let simonGenre = [];
 
 const addSimonGenre = genre => {
 	//console.log("genre", genre);
@@ -125,7 +124,7 @@ function stripHTML(text) {
 }
 
 function getInfo(movie) {
-	if (i === moviesAllocineNowShowing.length) {
+	if (i === moviesNowShowing.length) {
 		console.log('stop');
 		setTimeout(function() {
 			console.log("c'est fini");
@@ -164,9 +163,9 @@ function getInfo(movie) {
 				result.movie.genre.map(genre => genreList.push(genre.$));
 				let genreListSimon = [];
 				genreList.map(genreAllocine => genreListSimon.push(addSimonGenre(genreAllocine)));
-				var genreListSimonArr = [].concat.apply([], genreListSimon);
-				var genreListSimonToSave = _.uniq(genreListSimonArr).sort();
-				var data = new AllocineMovie({
+				let genreListSimonArr = [].concat.apply([], genreListSimon);
+				let genreListSimonToSave = _.uniq(genreListSimonArr).sort();
+				let data = new Movie({
 					code: movie.code,
 					movieType: {
 						code: movie.movieType.code,
@@ -203,17 +202,18 @@ function getInfo(movie) {
 					hasPreview: movie.hasPreview,
 					statistics: movie.statistics
 				});
-				var allocinemovie = new AllocineMovie(data);
-				allocinemovie.save(function(err, obj) {
+				let nowMovie = new Movie(data);
+				nowMovie.save((err, obj) => {
 					if (err) {
 						console.log('error saving movie', err);
 					} else {
+						console.log('success');
 					}
 				});
 			} else {
 				console.log('erreur', error);
 				console.log('erreur dans la requête sur film avec id', movie.code, movie.statusList);
-				var failedMovie = { movie };
+				let failedMovie = { movie };
 				failedRequestsNowShowingMovies.push(failedMovie);
 				console.log('failedRequestsNowShowingMovies so far:', failedRequestsNowShowingMovies.length);
 			}
@@ -221,16 +221,16 @@ function getInfo(movie) {
 	);
 }
 
-var offset = 1000;
-var i = 0;
-moviesAllocineNowShowing.forEach(function(movie) {
+let offset = 1000;
+let i = 0;
+moviesNowShowing.forEach(movie => {
 	if (ids.indexOf(movie.code) === -1) {
-		setTimeout(function() {
+		setTimeout(() => {
 			i++;
 			ids.push(movie.code);
 			movie.release.releaseDate = new Date(movie.release.releaseDate);
 			movie.statusList = 'nowshowing';
-			console.log('Saving Now Showing Movie', i, 'of', moviesAllocineNowShowing.length, 'in', movie.statusList);
+			console.log('Saving Now Showing Movie', i, 'of', moviesNowShowing.length, 'in', movie.statusList);
 			getInfo(movie);
 		}, 1000 + offset);
 		offset += 1000;

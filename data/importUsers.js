@@ -33,7 +33,7 @@ users.forEach(user => {
 						favorites: movies,
 						age: user.account.age,
 						description: user.account.description,
-						genre: user.account.genre,
+						gender: user.account.gender,
 						subscription: user.account.subscription,
 						picture: user.account.picture,
 						location: user.account.location

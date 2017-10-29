@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const crypto = require('crypto');
 const bcrypt = require('bcrypt-nodejs');
-// const passportLocalMongoose = require('passport-local-mongoose');
+const passportLocalMongoose = require('passport-local-mongoose');
 const schemaOptions = {
 	timestamps: true,
 	toJSON: {
@@ -72,10 +72,10 @@ const UserSchema = new mongoose.Schema(
 );
 
 UserSchema.index({ loc: '2dsphere' });
-// UserSchema.plugin(passportLocalMongoose, {
-// usernameField: 'email', // L'authentification utilisera `email` plutôt `username`
-// session: false // L'API ne nécessite pas de sessions
-// });
+UserSchema.plugin(passportLocalMongoose, {
+	usernameField: 'email', // L'authentification utilisera `email` plutôt `username`
+	session: false // L'API ne nécessite pas de sessions
+});
 
 UserSchema.pre('save', function(next) {
 	var user = this;
