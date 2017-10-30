@@ -5,7 +5,7 @@
 	module.exports = acl => {
 		return {
 			list: (req, res) => {
-				let movie = req.query.movie;
+				let movie = !req.query.movie ? '' : req.query.movie;
 				let count = !req.query.count ? 100 : parseInt(req.query.count);
 				let zip = !req.query.zip ? '' : req.query.zip;
 				let lat = !req.query.lat ? 0 : req.query.lat;
