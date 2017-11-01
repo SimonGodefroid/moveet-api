@@ -148,6 +148,9 @@
 						return res.status(500).json({ success: false, message: err || 'movie not found' });
 					} else {
 						User.findById(req.params.id, (err, user) => {
+							if (user === null) {
+								return res.status(500).json({ success: false, message: 'user not found' });
+							}
 							if (err) {
 								console.log(err);
 								return res.status(500).json({ success: false, message: err });
@@ -291,6 +294,9 @@
 			},
 			swipeLike: (req, res) => {
 				User.findById(req.params.id, (err, user) => {
+					if (user === null) {
+						return res.status(500).json({ success: false, message: 'user not found' });
+					}
 					if (err) {
 						console.log(err);
 						return res.status(500).json({ success: false, message: err });
@@ -320,6 +326,9 @@
 			},
 			swipePass: (req, res) => {
 				User.findById(req.params.id, (err, user) => {
+					if (user === null) {
+						return res.status(500).json({ success: false, message: 'user not found' });
+					}
 					if (err) {
 						console.log(err);
 						return res.status(500).json({ success: false, message: err });
