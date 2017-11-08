@@ -78,12 +78,11 @@
 					user = new User({
 						account: { username: req.body.name },
 						email: req.body.email,
-						password: req.body.password,
-						token: generateToken(user)
+						password: req.body.password
 					});
 					user.save(err => {
 						console.log('coucou user save', err);
-						res.send({ token: user.token, user: user });
+						res.send({ token: generateToken(user), user: user });
 					});
 				});
 			},
