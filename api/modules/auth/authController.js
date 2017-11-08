@@ -122,11 +122,15 @@
 					});
 				});
 			},
-			delete: (req, res) => {
+			accountDelete: (req, res) => {
 				User.remove({ _id: req.user.id }, err => {
 					res.send({ msg: 'Your account has been permanently deleted.' });
 				});
-			}
+			},
+			authFacebook: (req, res, next) => {},
+			authFacebookCallback: (req, res, next) => {},
+			authGoogle: (req, res, next) => {},
+			authGoogleCallback: (req, res, next) => {}
 		};
 	};
 })();
