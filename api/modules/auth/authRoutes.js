@@ -63,6 +63,12 @@ module.exports = app => {
    *       400:
    *         description: Login Error
   */
+	app.put('/api/v1/auth/account', Ctrl.ensureAuthenticated, Ctrl.accountPut);
+	app.delete('/account', Ctrl.ensureAuthenticated, Ctrl.accountDelete);
+	app.post('/api/v1/auth/facebook', Ctrl.authFacebook);
+	app.get('/api/v1/auth/facebook/callback', Ctrl.authFacebookCallback);
+	app.post('/api/v1/auth/google', Ctrl.authGoogle);
+	app.get('/api/v1/auth/google/callback', Ctrl.authGoogleCallback);
 };
 /////////////////////////////////////////////////////////////////////////////////////
 // SWAGGER DEFINITIONS //////////////////////////////////////////////////////////////

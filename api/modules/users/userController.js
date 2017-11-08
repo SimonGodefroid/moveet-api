@@ -8,20 +8,6 @@
 	// Global = require('../../../Global');
 	module.exports = acl => {
 		return {
-			// list: (req, res) => {
-			// 	User.find({})
-			// 		.exec()
-			// 		.then(users => {
-			// 			return res.status(200).json({
-			// 				success: true,
-			// 				count: users.length,
-			// 				message: users
-			// 			});
-			// 		})
-			// 		.catch(err => {
-			// 			console.log('err', err);
-			// 			return res.status(500).json({ success: false, message: err });
-			// 		});
 			list: (req, res) => {
 				let query = [];
 				let skip = '';

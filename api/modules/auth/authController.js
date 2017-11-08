@@ -27,7 +27,7 @@
 				if (req.isAuthenticated()) {
 					next();
 				} else {
-					res.status(401).send({ msg: 'Unauthorized' });
+					res.status(401).send({ success: false, message: 'Unauthorized' });
 				}
 			},
 			loginPost: (req, res, next) => {
@@ -41,19 +41,18 @@
 					return res.status(400).send(errors);
 				}
 				User.findOne({ email: req.body.email }, (err, user) => {
-					console.log('coucou login');
 					if (!user) {
 						return res.status(401).send({
-							msg:
-								'The email address ' +
-								req.body.email +
-								' is not associated with any account. ' +
-								'Double-check your email address and try again.'
+							success: false,
+							message: `The email address 
+								${req.body.email}
+								 is not associated with any account.
+								Double-check your email address and try again.`
 						});
 					}
 					user.comparePassword(req.body.password, (err, isMatch) => {
 						if (!isMatch) {
-							return res.status(401).send({ msg: 'Invalid email or password' });
+							return res.status(401).send({ success: false, message: 'Invalid email or password' });
 						}
 						res.send({ token: generateToken(user), user: user.toJSON() });
 					});
